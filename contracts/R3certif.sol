@@ -7,20 +7,13 @@ import "hardhat/console.sol";
 contract R3certif is ERC721URIStorage, Ownable(msg.sender) {
     constructor() ERC721("Certificat R3vive", "R3C") {}
 
-    error NotOwner();
     error NotGoodPrice();
 
-    address[] public certifOwners;
-    mapping(address => bool) public ownersExists;
-    mapping(address => uint256[]) public certifOwned;
+    address[] private certifOwners;
+    mapping(address => bool) private ownersExists;
+    mapping(address => uint256[]) private certifOwned;
 
     uint256 private _tokenId = 0;
-
-    enum watchesCategory {
-        LOW,
-        HIGH,
-        BEST
-    }
 
     event Received(address, uint);
 
@@ -38,7 +31,6 @@ contract R3certif is ERC721URIStorage, Ownable(msg.sender) {
     )
         external
         payable
-        // watchesCategory category
         onlyOwner
     {
         // if (category == watchesCategory.LOW) {
@@ -60,9 +52,9 @@ contract R3certif is ERC721URIStorage, Ownable(msg.sender) {
         _tokenId = _tokenId + 1;
     }
 
-    function withdraw() external payable onlyOwner {
+    function withdraw() external onlyOwner {
         address ownerAddress = owner();
-        (bool sent, ) = ownerAddress.call{value: address(this).balance}("");
+        (bool sent, ) = ownerAddress.call{value: getBalance(address(this))}("");
         require(sent, "Failed to send Ether");
     }
 
@@ -80,11 +72,13 @@ contract R3certif is ERC721URIStorage, Ownable(msg.sender) {
         return certifOwned[_owner];
     }
 
-    // function transfer(address _to, uint256 _tokenId) external {
-    //     if (ownerOf(_tokenId) != msg.sender) {
-    //         revert NotOwner();
-    //     }
-    //     _safeTransfer(msg.sender, _to, _tokenId);
-    //     console.log("token:", _tokenId, "transfer to : ", _to);
-    // }
+    function transfer(address _from, address _to, uint256 _id) external payable {
+        _safeTransfer(_from, _to, _id);
+        if (!ownersExists[_to]) {
+            certifOwners.push(_to);
+            ownersExists[_to] = true;
+        }
+        certifOwned[_to].push(_tokenId);
+        console.log("token:", _tokenId, "transfer to : ", _to);
+    }
 }

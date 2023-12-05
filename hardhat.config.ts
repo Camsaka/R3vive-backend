@@ -2,8 +2,6 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "hardhat-gas-reporter";
 import "@nomicfoundation/hardhat-ethers";
-import "hardhat-gui";
-import "hardhat-deploy";
 require("dotenv").config();
 
 const ownerPrivateKey: string = process.env.OWNER_PRIVATE_KEY!;
@@ -14,9 +12,6 @@ const infuraMainnetURL: string = process.env.INFURA_MAINNET_URL!;
 
 const config: HardhatUserConfig = {
    solidity: "0.8.20",
-   namedAccounts: {
-      deployer: 0,
-    },
    networks: {
       sepolia: {
          url: infuraSepoliaURL,
