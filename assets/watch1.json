@@ -1,13 +1,32 @@
 {
-   "name": "",
-   "description": {
-      "id": 1,
-      "brand": "Rolex",
-      "model": "Daytonna",
-      "serialN": "8YUGVIYU5",
-      "annee": 2002,
-      "previousOwner": "Camille Gautier",
-      "history": "Une superbe montre des année 2000. Elle a appartenue au roi louis XIV"
-   },
-   "image": "ipfs://bafybeig6573s3o4cu5jfijmwllsl6zsohlk4dqi5mawvzppfadrz5stvci"
+   "name": "Rolex Daytonna",
+   "description": "Montre Rolex Daytonna 2002",
+   "image": "ipfs://bafybeig6573s3o4cu5jfijmwllsl6zsohlk4dqi5mawvzppfadrz5stvci",
+   "attributes": [
+      {
+         "trait_type": "Brand",
+         "value": "Rolex"
+      },
+      {
+         "trait_type": "Model",
+         "value": "Daytonna"
+      },
+      {
+         "trait_type": "Serial Number",
+         "value": "8YUGVIYU5"
+      },
+      {
+         "display_type":"date",
+         "trait_type": "Year of fabrication",
+         "value": 2002
+      },
+      {
+         "trait_type": "Previous owner",
+         "value": "Camille Gautier"
+      },
+      {
+         "trait_type": "History",
+         "value": "Une superbe montre des année 2000. Elle a appartenue au roi louis XIV"
+      }
+   ]
 }
