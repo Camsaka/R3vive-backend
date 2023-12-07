@@ -25,23 +25,8 @@ contract R3certif is ERC721URIStorage, Ownable(msg.sender) {
         emit Received(msg.sender, msg.value);
     }
 
-    function mint(
-        address _to,
-        string calldata _uri
-    )
-        external
-        payable
-        onlyOwner
-    {
-        // if (category == watchesCategory.LOW) {
-        //     if (msg.value != 1000000000000000000) revert NotGoodPrice();
-        // }
-        // if (category == watchesCategory.HIGH) {
-        //     if (msg.value != 1000000000000000000) revert NotGoodPrice();
-        // }
-        // if (category == watchesCategory.BEST) {
-        //     if (msg.value != 1000000000000000000) revert NotGoodPrice();
-        // }
+    function mint(address _to, string calldata _uri) external payable {
+        if (msg.value != 1e17) revert NotGoodPrice();
         _mint(_to, _tokenId);
         _setTokenURI(_tokenId, _uri);
         if (!ownersExists[_to]) {
@@ -62,23 +47,40 @@ contract R3certif is ERC721URIStorage, Ownable(msg.sender) {
         return _address.balance;
     }
 
-    function getCertifOwners() public view returns (address[] memory) {
+    function getCertifOwners()
+        public
+        view
+        onlyOwner
+        returns (address[] memory)
+    {
         return certifOwners;
     }
 
     function getCertifFor(
         address _owner
-    ) public view returns (uint256[] memory) {
+    ) public view onlyOwner returns (uint256[] memory) {
         return certifOwned[_owner];
     }
 
-    function transfer(address _from, address _to, uint256 _id) external payable {
-        _safeTransfer(_from, _to, _id);
+    function transferTo(address payable _to, uint256 _id) external {
+        _safeTransfer(msg.sender, _to, _id);
         if (!ownersExists[_to]) {
             certifOwners.push(_to);
             ownersExists[_to] = true;
         }
-        certifOwned[_to].push(_tokenId);
-        console.log("token:", _tokenId, "transfer to : ", _to);
+
+        certifOwned[_to].push(_id);
+        uint256[] memory newCertifOwned = new uint256[](
+            certifOwned[msg.sender].length - 1
+        );
+        uint256 counter = 0;
+        for (uint256 i = 0; i < certifOwned[msg.sender].length; ++i) {
+            if (certifOwned[msg.sender][i] == _id) {} else {
+                newCertifOwned[counter] = certifOwned[msg.sender][i];
+                counter++;
+            }
+        }
+        certifOwned[msg.sender] = newCertifOwned;
+        console.log("token:", _id, "transfer to : ", _to);
     }
 }

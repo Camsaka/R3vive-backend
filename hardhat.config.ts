@@ -13,6 +13,12 @@ const infuraMainnetURL: string = process.env.INFURA_MAINNET_URL!;
 const config: HardhatUserConfig = {
    solidity: "0.8.20",
    networks: {
+      hardhat: {
+         // forking: {
+         //    url: infuraMainnetURL,
+         // },
+         chainId : 1337
+      },
       sepolia: {
          url: infuraSepoliaURL,
          accounts: [ownerPrivateKey],
@@ -20,12 +26,7 @@ const config: HardhatUserConfig = {
       goerli: {
          url: infuraGoerliURL,
          accounts: [ownerPrivateKey],
-      },
-      hardhat: {
-         forking: {
-            url: infuraMainnetURL,
-         },
-      },
+      }
    },
    etherscan: {
       apiKey: etherscanAPIKey,
