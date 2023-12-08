@@ -8,10 +8,13 @@ contract R3certif is ERC721URIStorage, Ownable(msg.sender) {
     constructor() ERC721("Certificat R3vive", "R3C") {}
 
     error NotGoodPrice();
+    error NotMintable();
+    error NotYourRequest();
 
     address[] private certifOwners;
     mapping(address => bool) private ownersExists;
     mapping(address => uint256[]) private certifOwned;
+    mapping (address => mapping (uint256 => bool)) private isMintable;
 
     uint256 private _tokenId = 0;
 
@@ -25,16 +28,17 @@ contract R3certif is ERC721URIStorage, Ownable(msg.sender) {
         emit Received(msg.sender, msg.value);
     }
 
-    function mint(address _to, string calldata _uri) external payable {
-        if (msg.value != 1e17) revert NotGoodPrice();
-        _mint(_to, _tokenId);
-        _setTokenURI(_tokenId, _uri);
+    function mint(address _to, string calldata _uri, uint256 _id) external payable {
+        if(msg.value != 1e17) revert NotGoodPrice();
+        if(!isMintable[msg.sender][_id]) revert NotMintable();
+        _mint(_to, _id);
+        _setTokenURI(_id, _uri);
         if (!ownersExists[_to]) {
             certifOwners.push(_to);
             ownersExists[_to] = true;
         }
-        certifOwned[_to].push(_tokenId);
-        _tokenId = _tokenId + 1;
+        certifOwned[_to].push(_id);
+        delete isMintable[msg.sender][_id];
     }
 
     function withdraw() external onlyOwner {
@@ -83,4 +87,18 @@ contract R3certif is ERC721URIStorage, Ownable(msg.sender) {
         certifOwned[msg.sender] = newCertifOwned;
         console.log("token:", _id, "transfer to : ", _to);
     }
+
+    function addTokenInConfirmationList() public{
+        isMintable[msg.sender][_tokenId] = false;
+        _tokenId = _tokenId + 1;
+    }
+
+    function confirmedMintablility(uint256 _id, address _owner) public onlyOwner{
+        isMintable[_owner][_id] = true;
+    }
+    
+    function getIsMintable(uint256 _id) external view returns(bool){
+        return isMintable[msg.sender][_id];
+    }
+
 }
