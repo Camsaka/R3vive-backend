@@ -31,40 +31,29 @@ describe("R3certif contract", function () {
          const { hardhatToken, owner, otherAccount } = await loadFixture(
             deployR3Certif
          );
+         hardhatToken.on('TokenAdd', (address, id) => {
+            console.log(address, id);
+         })
          const address1 = otherAccount.address;
 
-         await hardhatToken.connect(otherAccount).addTokenInConfirmationList();
-         console.log(await hardhatToken.connect(otherAccount).getIsMintable(0));
-
-         await hardhatToken.connect(owner).confirmedMintablility(0, address1);
-         console.log(await hardhatToken.connect(otherAccount).getIsMintable(0));
          //first mint test
          await hardhatToken.connect(otherAccount).mint(
             address1,
             "https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721URIStorage",
-            0,
-            { value: ethers.parseUnits("0.1", "ether") }
+            { value: ethers.parseUnits("0.01", "ether") }
          );
          expect(await hardhatToken.ownerOf(0)).to.equal(address1);
          expect(await hardhatToken.balanceOf(address1)).to.equal(1);
 
-         // //second mint test
-         await hardhatToken.connect(otherAccount).addTokenInConfirmationList();
-         console.log(await hardhatToken.connect(otherAccount).getIsMintable(1));
-
-         await hardhatToken.connect(owner).confirmedMintablility(1, address1);
-         console.log(await hardhatToken.connect(otherAccount).getIsMintable(1));
-
          await hardhatToken.connect(otherAccount).mint(
             address1,
             "https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721URIStorage",
-            1,
-            { value: ethers.parseUnits("0.1", "ether") }
+            { value: ethers.parseUnits("0.01", "ether") }
          );
          expect(await hardhatToken.ownerOf(0)).to.equal(address1);
          expect(await hardhatToken.balanceOf(address1)).to.equal(2);
 
-            expect(await hardhatToken.getBalance(hardhatToken.getAddress())).to.equal(ethers.parseEther("0.2"));
+            expect(await hardhatToken.getBalance(hardhatToken.getAddress())).to.equal(ethers.parseEther("0.02"));
 
             const certifOwners = await hardhatToken.getCertifOwners();
             const certifOwnedByAddress1 = await hardhatToken.getCertifFor(
@@ -154,52 +143,30 @@ describe("R3certif contract", function () {
          const { hardhatToken, owner, otherAccount } = await deployR3Certif();
          const address1 = otherAccount.address;
 
-         
-         await hardhatToken.connect(otherAccount).addTokenInConfirmationList();
-         console.log(await hardhatToken.connect(otherAccount).getIsMintable(0));
-
-         await hardhatToken.connect(owner).confirmedMintablility(0, address1);
-         console.log(await hardhatToken.connect(otherAccount).getIsMintable(0));
+         //mint
+         await hardhatToken.connect(otherAccount).mint(
+            address1,
+            "https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721URIStorage",
+            { value: ethers.parseUnits("0.01", "ether") }
+         );
          
          //mint
          await hardhatToken.connect(otherAccount).mint(
             address1,
             "https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721URIStorage",
-            0,
-            { value: ethers.parseUnits("0.1", "ether") }
+            { value: ethers.parseUnits("0.01", "ether") }
          );
-
-         await hardhatToken.connect(otherAccount).addTokenInConfirmationList();
-         console.log(await hardhatToken.connect(otherAccount).getIsMintable(1));
-
-         await hardhatToken.connect(owner).confirmedMintablility(1, address1);
-         console.log(await hardhatToken.connect(otherAccount).getIsMintable(1));
          
          //mint
          await hardhatToken.connect(otherAccount).mint(
             address1,
             "https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721URIStorage",
-            1,
-            { value: ethers.parseUnits("0.1", "ether") }
+            { value: ethers.parseUnits("0.01", "ether") }
          );
 
-         await hardhatToken.connect(otherAccount).addTokenInConfirmationList();
-         console.log(await hardhatToken.connect(otherAccount).getIsMintable(2));
-
-         await hardhatToken.connect(owner).confirmedMintablility(2, address1);
-         console.log(await hardhatToken.connect(otherAccount).getIsMintable(2));
-         
-         //mint
-         await hardhatToken.connect(otherAccount).mint(
-            address1,
-            "https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721URIStorage",
-            2,
-            { value: ethers.parseUnits("0.1", "ether") }
-         );
-
-         console.log(await hardhatToken.getCertifOwners());
-         console.log("certif address1 :", await hardhatToken.getCertifFor(address1));
-         console.log("certif owner :", await hardhatToken.getCertifFor(owner));
+         // console.log(await hardhatToken.getCertifOwners());
+         // console.log("certif address1 :", await hardhatToken.getCertifFor(address1));
+         // console.log("certif owner :", await hardhatToken.getCertifFor(owner));
 
          expect(await hardhatToken.ownerOf(0)).to.equal(address1);
          expect(await hardhatToken.ownerOf(1)).to.equal(address1);
@@ -210,9 +177,9 @@ describe("R3certif contract", function () {
          //transfer
          await hardhatToken.connect(otherAccount).transferTo(owner, 1);
 
-         console.log(await hardhatToken.getCertifOwners());
-         console.log("certif address1 :", await hardhatToken.getCertifFor(address1));
-         console.log("certif owner :", await hardhatToken.getCertifFor(owner));
+         // console.log(await hardhatToken.getCertifOwners());
+         // console.log("certif address1 :", await hardhatToken.getCertifFor(address1));
+         // console.log("certif owner :", await hardhatToken.getCertifFor(owner));
 
          expect(await hardhatToken.ownerOf(0)).to.equal(address1);
          expect(await hardhatToken.ownerOf(1)).to.equal(owner.address);
@@ -222,9 +189,9 @@ describe("R3certif contract", function () {
          //transfer
          await hardhatToken.connect(owner).transferTo(address1, 1);
 
-         console.log(await hardhatToken.getCertifOwners());
-         console.log("certif address1 :", await hardhatToken.getCertifFor(address1));
-         console.log("certif owner :", await hardhatToken.getCertifFor(owner));
+         // console.log(await hardhatToken.getCertifOwners());
+         // console.log("certif address1 :", await hardhatToken.getCertifFor(address1));
+         // console.log("certif owner :", await hardhatToken.getCertifFor(owner));
 
          expect(await hardhatToken.ownerOf(0)).to.equal(address1);
          expect(await hardhatToken.ownerOf(1)).to.equal(address1);
